@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Kaydedilen essay'ler
+essay_*.txt
+
+# Editör dosyaları
+.vscode/
+.idea/
+.DS_Store
