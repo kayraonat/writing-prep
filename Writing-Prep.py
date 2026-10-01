@@ -113,7 +113,7 @@ class WritingPrepApp:
           self.text.pack(side="left", fill="both", expand=True)
 
           self.text.bind("<KeyRelease>", lambda e: self.update_stats())
-          self.text.bind("<<Paste>>", lambda e: self.root.after(10, self.update_status))
+          self.text.bind("<<Paste>>", lambda e: self.root.after(10, self.update_stats))
           self.progress.bind("<Configure>", lambda e: self.update_stats())
           self.text.focus_set()
 
@@ -229,4 +229,4 @@ def main():
  
  
 if __name__ == "__main__":
-    main()                
+    main()
