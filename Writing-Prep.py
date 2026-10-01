@@ -171,4 +171,62 @@ class WritingPrepApp:
            self.text.focus_set()
            self.tick()
 
-           
+      def pause_timer(self):
+          self.timer_running = False
+          if self.timer_id:
+              self.root.after_cancel(self.timer_id)
+              self.timer_id = None
+          self.start_btn.config(text="Resume", bg=GREEN)
+ 
+      def reset_timer(self):
+          self.pause_timer()
+          self.remaining_seconds = 0
+          try:
+              self.timer_label.config(text=self.format_time(int(self.minutes_var.get()) * 60), fg=FG)
+          except ValueError:
+              self.timer_label.config(text="00:00", fg=FG)
+          self.start_btn.config(text="Start the Timer", bg=GREEN)
+ 
+      def tick(self):
+          self.timer_label.config(text=self.format_time(self.remaining_seconds),
+                                  fg=RED if self.remaining_seconds <= 60 else FG)
+          if self.remaining_seconds <= 0:
+              self.time_up()
+              return
+          self.remaining_seconds -= 1
+          self.timer_id = self.root.after(1000, self.tick)
+ 
+      def time_up(self):
+          self.timer_running = False
+          self.timer_id = None
+          self.start_btn.config(text="Start the Timer", bg=GREEN)
+          words = self.count_words()
+          goal = self.get_goal()
+          result = "You reached your target!" if words >= goal else f"You are {goal - words} words short of your target."
+          messagebox.showinfo("Time is up!",
+                              f"Your writing time is over.\nTotal: {words} words.\n{result}\n\n"
+                              "Don't forget to save your work.")
+ 
+      def save_text(self):
+          content = self.text.get("1.0", "end-1c")
+          if not content.strip():
+              messagebox.showwarning("Empty", "There is no text to save.")
+              return
+          default = f"essay_{datetime.now():%Y%m%d_%H%M}.txt"
+          path = filedialog.asksaveasfilename(defaultextension=".txt", initialfile=default,
+                                              filetypes=[("Text document", "*.txt")])
+          if path:
+              with open(path, "w", encoding="utf-8") as f:
+                  f.write(content)
+              messagebox.showinfo("Saved", f"File saved:\n{path}")
+ 
+ 
+# 4. STARTING THE APPLICATION --------------------------------
+def main():
+    root = tk.Tk()
+    WritingPrepApp(root)
+    root.mainloop()
+ 
+ 
+if __name__ == "__main__":
+    main()                
